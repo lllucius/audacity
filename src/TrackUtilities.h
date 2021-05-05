@@ -26,6 +26,8 @@ namespace TrackUtilities {
    // Type of solo (standard or simple) follows the set preference, unless
    // exclusive == true, which causes the opposite behavior.
    void DoTrackSolo( AudacityProject &project, Track *pTrack, bool exclusive );
+   void DoTrackEffects( AudacityProject &project, Track *pTrack, wxPoint pos);
+   void DoTrackBypass( AudacityProject &project, Track *pTrack);
    void DoRemoveTrack( AudacityProject &project, Track * toRemove );
    void DoRemoveTracks( AudacityProject & );
 

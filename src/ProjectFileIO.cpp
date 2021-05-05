@@ -29,6 +29,7 @@ Paul Licameli split from AudacityProject.cpp
 #include "TempDirectory.h"
 #include "ViewInfo.h"
 #include "WaveTrack.h"
+#include "effects/RealtimeEffectManager.h"
 #include "widgets/AudacityMessageBox.h"
 #include "widgets/ErrorDialog.h"
 #include "widgets/NumericTextCtrl.h"
@@ -1667,6 +1668,9 @@ void ProjectFileIO::WriteXML(XMLWriter &xmlFile,
                      settings.GetBandwidthSelectionFormatName().Internal());
 
    tags.WriteXML(xmlFile);
+
+   auto &realtimeEffectManager = RealtimeEffectManager::Get(proj);
+   realtimeEffectManager.WriteXML(xmlFile, proj);
 
    unsigned int ndx = 0;
    tracklist.Any().Visit([&](const Track *t)

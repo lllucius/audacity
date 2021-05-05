@@ -1510,6 +1510,22 @@ bool AudioUnitEffect::ShowInterface(wxWindow &parent,
    return res;
 }
 
+void AudioUnitEffect::CloseInterface()
+{
+   if (mDialog)
+   {
+      if (mDialog->Close(true))
+      {
+         mDialog = nullptr;
+      }
+   }
+}
+
+bool AudioUnitEffect::IsInterfaceShown()
+{
+   return mDialog != nullptr;
+}
+
 bool AudioUnitEffect::GetAutomationParameters(CommandParameters & parms)
 {
    OSStatus result;

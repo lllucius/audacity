@@ -14,96 +14,9 @@
 #ifndef __AUDACITY_EFFECTUI_H__
 #define __AUDACITY_EFFECTUI_H__
 
-#include <wx/bitmap.h> // member variables
-
-#if defined(EXPERIMENTAL_EFFECTS_RACK)
-
-#include <vector>
-
-#include <wx/defs.h>
-#include <wx/frame.h> // to inherit
-#include <wx/timer.h> // member variable
-
-class wxFlexGridSizer;
-class wxPanel;
-class wxStaticText;
-
-class AudacityProject;
-
-class Effect;
-using EffectArray = std::vector<Effect*>;
-
-class EffectRack final : public wxFrame
-{
-public:
-   EffectRack( AudacityProject &project );
-   virtual ~EffectRack();
-
-   void Add(Effect *effect, bool active = false, bool favorite = false);
-
-   static EffectRack &Get( AudacityProject &project );
-
-private:
-
-   wxBitmap CreateBitmap(const char *const xpm[], bool up, bool pusher);
-   int GetEffectIndex(wxWindow *win);
-   void MoveRowUp(int row);
-   void UpdateActive();
-
-   void OnClose(wxCloseEvent & evt);
-   void OnTimer(wxTimerEvent & evt);
-   void OnApply(wxCommandEvent & evt);
-   void OnBypass(wxCommandEvent & evt);
-
-   void OnPower(wxCommandEvent & evt);
-   void OnEditor(wxCommandEvent & evt);
-   void OnUp(wxCommandEvent & evt);
-   void OnDown(wxCommandEvent & evt);
-   void OnFav(wxCommandEvent & evt);
-   void OnRemove(wxCommandEvent & evt);
-
-private:
-   AudacityProject &mProject;
-
-   wxStaticText *mLatency;
-   int mLastLatency;
-
-   wxBitmap mPowerPushed;
-   wxBitmap mPowerRaised;
-   wxBitmap mSettingsPushed;
-   wxBitmap mSettingsRaised;
-   wxBitmap mUpPushed;
-   wxBitmap mUpRaised;
-   wxBitmap mUpDisabled;
-   wxBitmap mDownPushed;
-   wxBitmap mDownRaised;
-   wxBitmap mDownDisabled;
-   wxBitmap mFavPushed;
-   wxBitmap mFavRaised;
-   wxBitmap mRemovePushed;
-   wxBitmap mRemoveRaised;
-
-   std::vector<int> mPowerState;
-   std::vector<int> mFavState;
-
-   int mNumEffects;
-
-   wxTimer mTimer;
-
-   wxPanel *mPanel;
-   wxFlexGridSizer *mMainSizer;
-
-   EffectArray mEffects;
-   EffectArray mActive;
-   bool mBypassing;
-
-   DECLARE_EVENT_TABLE()
-};
-
-#endif
-
 #include "audacity/EffectInterface.h"
 #include "../widgets/wxPanelWrapper.h" // to inherit
+#include "../widgets/ThemedDialog.h"
 
 #include "../SelectedRegion.h"
 
@@ -112,13 +25,15 @@ class AudacityProject;
 class Effect;
 
 class wxCheckBox;
+class ShuttleGui;
 
 //
-class EffectUIHost final : public wxDialogWrapper,
-                     public EffectUIHostInterface
+class EffectUIHost final : public ThemedDialog,
+                           public EffectUIHostInterface
 {
 public:
    // constructors and destructors
+   EffectUIHost();
    EffectUIHost(wxWindow *parent,
                 AudacityProject &project,
                 Effect *effect,
@@ -129,12 +44,18 @@ public:
                 EffectUIClientInterface *client);
    virtual ~EffectUIHost();
 
+   bool Create(wxWindow *parent,
+               AudacityProject &project,
+               EffectUIClientInterface *client,
+               Effect *effect,
+               AudacityCommand *command);
+
    bool TransferDataToWindow() override;
    bool TransferDataFromWindow() override;
 
    int ShowModal() override;
 
-   bool Initialize();
+   bool Populate(ShuttleGui &S) override;
 
 private:
    wxPanel *BuildButtonBar( wxWindow *parent );
@@ -149,7 +70,6 @@ private:
    void OnHelp(wxCommandEvent & evt);
    void OnDebug(wxCommandEvent & evt);
    void OnMenu(wxCommandEvent & evt);
-   void OnEnable(wxCommandEvent & evt);
    void OnPlay(wxCommandEvent & evt);
    void OnRewind(wxCommandEvent & evt);
    void OnFFwd(wxCommandEvent & evt);
@@ -170,7 +90,6 @@ private:
 
    void InitializeRealtime();
    void CleanupRealtime();
-   void Resume();
 
 private:
    AudacityProject *mProject;
@@ -191,17 +110,13 @@ private:
    wxButton *mPlayBtn;
    wxButton *mRewindBtn;
    wxButton *mFFwdBtn;
-   wxCheckBox *mEnableCb;
 
-   wxButton *mEnableToggleBtn;
    wxButton *mPlayToggleBtn;
 
    wxBitmap mPlayBM;
    wxBitmap mPlayDisabledBM;
    wxBitmap mStopBM;
    wxBitmap mStopDisabledBM;
-
-   bool mEnabled;
 
    bool mDisableTransport;
    bool mPlaying;
@@ -211,7 +126,6 @@ private:
    double mPlayPos;
 
    bool mDismissed{};
-   bool mNeedsResume{};
 
    DECLARE_EVENT_TABLE()
 };

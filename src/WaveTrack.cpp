@@ -50,6 +50,7 @@ from the project that will own the track.
 
 #include "Prefs.h"
 
+#include "effects/RealtimeEffectManager.h"
 #include "effects/TimeWarper.h"
 #include "prefs/QualityPrefs.h"
 #include "prefs/SpectrogramSettings.h"
@@ -1721,8 +1722,14 @@ XMLTagHandler *WaveTrack::HandleXMLChild(const wxChar *tag)
    //
    if (!wxStrcmp(tag, wxT("waveclip")))
       return CreateClip();
-   else
-      return NULL;
+
+   if (!wxStrcmp(tag, wxT("effects")))
+   {
+      auto & manager = RealtimeEffectManager::Get(*GetOwner()->GetOwner());
+      return manager.ReadXML(const_cast<WaveTrack &>(*this));
+   }
+
+   return NULL;
 }
 
 void WaveTrack::WriteXML(XMLWriter &xmlFile) const
@@ -1743,6 +1750,9 @@ void WaveTrack::WriteXML(XMLWriter &xmlFile) const
    {
       clip->WriteXML(xmlFile);
    }
+
+   auto & manager = RealtimeEffectManager::Get(*GetActiveProject());
+   manager.WriteXML(xmlFile, const_cast<WaveTrack &>(*this));
 
    xmlFile.EndTag(wxT("wavetrack"));
 }
