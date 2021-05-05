@@ -13,6 +13,7 @@
 
 class AudacityProject;
 class Track;
+class wxPoint;
 
 namespace TrackUtilities {
 

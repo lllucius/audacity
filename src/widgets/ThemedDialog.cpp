@@ -17,6 +17,7 @@
 
 #include <wx/dcmemory.h>
 #include <wx/bitmap.h>
+#include <wx/frame.h>
 #include <wx/image.h>
 #include <wx/sizer.h>
 

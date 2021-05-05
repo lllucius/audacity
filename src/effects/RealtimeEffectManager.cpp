@@ -13,11 +13,13 @@
 
 #include "audacity/EffectInterface.h"
 #include "MemoryX.h"
+#include "../Project.h"
 #include "../ProjectHistory.h"
 #include "../ProjectSettings.h"
 #include "EffectManager.h"
 #include "PluginManager.h"
 #include "ProjectFileIORegistry.h"
+#include "UndoManager.h"
 
 #include <atomic>
 #include <chrono>

@@ -18,6 +18,7 @@
 #include "../MemoryX.h"
 
 #include "../PluginManager.h"
+#include "../Project.h"
 #include "../xml/XMLWriter.h"
 #include "EffectManager.h"
 #include "EffectUI.h"

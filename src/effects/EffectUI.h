@@ -20,6 +20,8 @@
 
 #include "../SelectedRegion.h"
 
+#include <wx/bitmap.h>
+
 class AudacityCommand;
 class AudacityProject;
 class Effect;
